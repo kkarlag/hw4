@@ -152,7 +152,7 @@ protected:
 template<class Key, class Value>
 void AVLTree<Key, Value>::insert (const std::pair<const Key, Value> &new_item)
 {
-    Node<Key, Value>* temp = this->search(this->root_, new_item.second);
+    Node<Key, Value>* temp = this->search(this->root_, new_item.first);
     if(temp)
         temp->setValue(new_item.second);
     else
@@ -206,11 +206,11 @@ void AVLTree<Key, Value>:: remove(const Key& key)
     Node<Key,Value>* temp = this->search(this->root_, key);
     if(temp){
         if(temp->getLeft() && temp->getRight())
-            nodeSwap((AVLNode<char, int>*)this->predecessor(temp), (AVLNode<char, int>*)temp);
+            nodeSwap((AVLNode<Key,Value>*)this->predecessor(temp), (AVLNode<Key,Value>*)temp);
         else if(temp->getLeft())
-            nodeSwap((AVLNode<char, int>*)temp->getLeft(), (AVLNode<char, int>*)temp);
+            nodeSwap((AVLNode<Key,Value>*)temp->getLeft(), (AVLNode<Key,Value>*)temp);
         else if(temp->getRight())
-            nodeSwap((AVLNode<char, int>*)temp->getRight(), (AVLNode<char, int>*)temp);
+            nodeSwap((AVLNode<Key,Value>*)temp->getRight(), (AVLNode<Key,Value>*)temp);
 
         free(temp);
     }
@@ -227,3 +227,4 @@ void AVLTree<Key, Value>::nodeSwap( AVLNode<Key,Value>* n1, AVLNode<Key,Value>* 
 
 
 #endif
+
