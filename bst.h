@@ -254,6 +254,7 @@ protected:
     Node<Key, Value>* deleteKey(Node<Key, Value>* node, const Key& k);
     Node<Key, Value>* search(Node<Key, Value>* node, const Key& k) const;
     Node<Key, Value>* insertInternal(Node<Key, Value>* node, const std::pair<const Key, Value> &keyValuePair) const;
+    bool isBalanced();
     bool isBalancedInternal(Node<Key, Value>* node);
     int height(Node<Key, Value>* root);
 
@@ -462,11 +463,15 @@ Value const & BinarySearchTree<Key, Value>::operator[](const Key& key) const
 template<class Key, class Value>
 void BinarySearchTree<Key, Value>::insert(const std::pair<const Key, Value> &keyValuePair)
 {
-    Node<Key, Value>* temp = search(this->root_, keyValuePair.second);
+    Node<Key, Value>* temp = search(this->root_, keyValuePair.first);
     if(temp)
         temp->setValue(keyValuePair.second);
     else
         this->root_ = insertInternal(this->root_, keyValuePair);
+
+    if(!isBalanced()){
+        
+    }
 }
 
 template<class Key, class Value>
@@ -488,13 +493,17 @@ Node<Key, Value>* BinarySearchTree<Key, Value>::insertInternal(Node<Key, Value>*
         return new Node<Key, Value>(keyValuePair.first, keyValuePair.second, NULL);
     }
  
-    if (keyValuePair.second > node->getValue()) {
-
-        node->setRight(insertInternal(node->getRight(), keyValuePair));
+    if (keyValuePair.first > node->getKey()) {
+        if(node->getRight() == NULL)
+            node->setRight(new Node<Key, Value>(keyValuePair.first, keyValuePair.second, node));
+        else
+            node->setRight(insertInternal(node->getRight(), keyValuePair));
     }
-    else if (keyValuePair.second < node->getValue()){
-
-        node->setLeft(insertInternal(node->getLeft(), keyValuePair));
+    else if (keyValuePair.first < node->getKey()){
+        if(node->getLeft() == NULL)
+            node->setLeft(new Node<Key, Value>(keyValuePair.first, keyValuePair.second, node));
+        else
+            node->setLeft(insertInternal(node->getLeft(), keyValuePair));
     }
 
     return node;
@@ -520,7 +529,7 @@ bool BinarySearchTree<Key, Value>::isBalancedInternal(Node<Key, Value>* node){
     int rh = height(node->getRight());
  
     if (abs(lh - rh) <= 1 && isBalancedInternal(node->getLeft())
-        && isBalanced(node->getRight()))
+        && isBalancedInternal(node->getRight()))
         return true;
  
     // If we reach here then tree is not height-balanced
@@ -621,9 +630,9 @@ Node<Key, Value>* BinarySearchTree<Key, Value>::internalFind(const Key& key) con
  * Return true iff the BST is balanced.
  */
 template<typename Key, typename Value>
-bool BinarySearchTree<Key, Value>::isBalanced() const
+bool BinarySearchTree<Key, Value>::isBalanced() 
 {
-    return isBalancedInternal(this->root_);
+    return isBalancedInternal(root_);
 }
 
 
